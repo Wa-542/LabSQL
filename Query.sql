@@ -1,7 +1,54 @@
+
 --การ Query ข้อมูลจากหลายตาราง (Join)
 -- 1.   จงแสดงข้อมูลรหัสใบสั่งซื้อ ชื่อบริษัทลูกค้า ชื่อและนามสกุลพนักงาน(ในคอลัมน์เดียวกัน) วันที่สั่งซื้อ ชื่อบริษัทขนส่งของ เมืองและประเทศที่ส่งของไป รวมถึงยอดเงินที่ต้องรับจากลูกค้าด้วย  
+SELECT 
+    o.OrderID AS รหัสใบสั่งซื้อ,
+    c.CompanyName AS ชื่อลูกค้า,
+    (e.FirstName + ' ' + e.LastName) AS ชื่อพนักงาน,
+    o.OrderDate AS วันที่สั่งซื้อ,
+    s.CompanyName AS บริษัทขนส่ง,
+    o.ShipCity AS เมือง,
+    o.ShipCountry AS ประเทศ,
+    ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS ยอดรวม
+FROM Orders o
+JOIN Customers c ON o.CustomerID = c.CustomerID
+JOIN Employees e ON o.EmployeeID = e.EmployeeID
+JOIN Shippers s ON o.ShipVia = s.ShipperID
+JOIN [Order Details] od ON o.OrderID = od.OrderID
+GROUP BY o.OrderID, c.CompanyName, e.FirstName, e.LastName,
+         o.OrderDate, s.CompanyName, o.ShipCity, o.ShipCountry
+ORDER BY o.OrderID;
+
 -- 2.   จงแสดง ข้อมูล ชื่อบริษัทลูกค้า ชื่อผู้ติดต่อ เมือง ประเทศ จำนวนใบสั่งซื้อที่เกี่ยวข้องและ ยอดการสั่งซื้อทั้งหมดเลือกมาเฉพาะเดือน มกราคมถึง มีนาคม  1997
+SELECT 
+    c.CompanyName AS ชื่อลูกค้า,
+    c.ContactName AS ชื่อผู้ติดต่อ,
+    c.City AS เมือง,
+    c.Country AS ประเทศ,
+    COUNT(DISTINCT o.OrderID) AS จำนวนใบสั่งซื้อ,
+    ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS ยอดรวม
+FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+JOIN [Order Details] od ON o.OrderID = od.OrderID
+WHERE o.OrderDate BETWEEN '1997-01-01' AND '1997-03-31'
+GROUP BY c.CompanyName, c.ContactName, c.City, c.Country
+ORDER BY จำนวนใบสั่งซื้อ DESC;
+
 -- 3.   จงแสดงชื่อเต็มของพนักงาน ตำแหน่ง เบอร์โทรศัพท์ จำนวนใบสั่งซื้อ รวมถึงยอดการสั่งซื้อทั้งหมดในเดือนพฤศจิกายน ธันวาคม 2539  โดยที่ใบสั่งซื้อนั้นถูกส่งไปประเทศ USA, Canada หรือ Mexico
+SELECT 
+    (e.FirstName + ' ' + e.LastName) AS ชื่อพนักงาน,
+    e.Title AS ตำแหน่ง,
+    e.HomePhone AS เบอร์โทร,
+    COUNT(DISTINCT o.OrderID) AS จำนวนใบสั่งซื้อ,
+    ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS ยอดรวม
+FROM Employees e
+JOIN Orders o ON e.EmployeeID = o.EmployeeID
+JOIN [Order Details] od ON o.OrderID = od.OrderID
+WHERE o.OrderDate BETWEEN '1996-11-01' AND '1996-12-31'
+  AND o.ShipCountry IN ('USA','Canada','Mexico')
+GROUP BY e.FirstName, e.LastName, e.Title, e.HomePhone
+ORDER BY ยอดรวม DESC;
+
 -- 4.   จงแสดงรหัสสินค้า ชื่อสินค้า ราคาต่อหน่วย  และจำนวนทั้งหมดที่ขายได้ในเดือน มิถุนายน 2540
 -- 5.   จงแสดงรหัสสินค้า ชื่อสินค้า ราคาต่อหน่วย และยอดเงินทั้งหมดที่ขายได้ ในเดือน มกราคม 2540 แสดงเป็นทศนิยม 2 ตำแหน่ง
 -- 6.   จงแสดงชื่อบริษัทตัวแทนจำหน่าย ชื่อผู้ติดต่อ เบอร์โทร เบอร์ Fax รหัส ชื่อสินค้า ราคา จำนวนรวมที่จำหน่ายได้ในปี 1996
