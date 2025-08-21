@@ -134,7 +134,17 @@ JOIN [Order Details] od ON o.OrderID = od.OrderID
 JOIN Products p ON od.ProductID = p.ProductID
 WHERE c.CompanyName = 'Around the Horn'
 GROUP BY p.ProductID, p.ProductName
-ORDER BY p.ProductID, p.ProductName;
+
+--ต้องการหมายเลขใบสั่งซื้อ ชื่อพนักงาน และยอดขายในใบสั่งซื้อนั้น
+SELECT 
+    o.OrderID AS หมายเลขใบสั่งซื้อ,
+    (e.FirstName + ' ' + e.LastName) AS ชื่อพนักงาน,
+    ROUND(SUM(od.UnitPrice * od.Quantity * (1 - od.Discount)), 2) AS ยอดขายรวม
+FROM Orders o
+JOIN Employees e ON o.EmployeeID = e.EmployeeID
+JOIN [Order Details] od ON o.OrderID = od.OrderID
+GROUP BY o.OrderID, e.FirstName, e.LastName
+ORDER BY o.OrderID;
 
 
 
