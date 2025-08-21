@@ -99,3 +99,39 @@ SELECT
 FROM Products p
 JOIN [Order Details] od ON p.ProductID = od.ProductID
 GROUP BY p.ProductID, p.ProductName;
+
+--ต้องการรหัสสินค้า ชื่อสินค้า ที่ nancy ขายได้ ทั้งหมด เรียงตามลำดับรหัสสินค้า
+SELECT 
+    p.ProductID AS รหัสสินค้า,
+    p.ProductName AS ชื่อสินค้า,
+    SUM(od.Quantity) AS จำนวนทั้งหมดที่ขาย
+FROM Employees e
+JOIN Orders o ON e.EmployeeID = o.EmployeeID
+JOIN [Order Details] od ON o.OrderID = od.OrderID
+JOIN Products p ON od.ProductID = p.ProductID
+WHERE e.FirstName = 'Nancy'
+GROUP BY p.ProductID, p.ProductName
+ORDER BY p.ProductID;
+
+--ต้องการชื่อบริษัทลูกค้า Around the Horn ซื้อสินค้าที่มาจากประเทศอะไรบ้าง
+SELECT DISTINCT 
+    s.Country AS ประเทศที่ซื้อสินค้า
+FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+JOIN [Order Details] od ON o.OrderID = od.OrderID
+JOIN Products p ON od.ProductID = p.ProductID
+JOIN Suppliers s ON p.SupplierID = s.SupplierID
+WHERE c.CompanyName = 'Around the Horn';
+
+--บริษัทลูกค้าชื่อ Around the Horn ซื้อสินค้าอะไรบ้าง จำนวนเท่าใด
+SELECT DISTINCT 
+    p.ProductID AS รหัสสินค้า,
+    p.ProductName AS ชื่อสินค้า
+FROM Customers c
+JOIN Orders o ON c.CustomerID = o.CustomerID
+JOIN [Order Details] od ON o.OrderID = od.OrderID
+JOIN Products p ON od.ProductID = p.ProductID
+WHERE c.CompanyName = 'Around the Horn'
+ORDER BY p.ProductID;
+
+
