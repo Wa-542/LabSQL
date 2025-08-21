@@ -73,3 +73,29 @@ FROM Orders O
 join Customers C on O.CustomerID=C.CustomerID
 
 join Employees E on O.EmployeeID=E.EmployeeID
+
+--• ต้องการ รหัสพนักงาน ชื่อพนักงาน จ านวนใบสั่งซื้อที่เกี่ยวข้อง ผลรวมของค่าขนส่งในปี 1998
+
+select e.EmployeeID, FirstName , count(*) as [จ านวน order]
+       , sum(freight) as [Sum of Freight]
+from Employees e join Orders o on e.EmployeeID = o.EmployeeID
+where year(orderdate) = 1998
+group by e.EmployeeID, FirstName
+
+--ต้องการชื่อบริษัทขนส่ง และจำนวนใบสั่งซื้อที่เกี่ยวข้อง
+SELECT 
+    s.CompanyName AS ชื่อบริษัทขนส่ง,
+    COUNT(o.OrderID) AS จำนวนใบสั่งซื้อ
+FROM Shippers s
+JOIN Orders o ON s.ShipperID = o.ShipVia
+GROUP BY s.CompanyName;
+
+
+--ต้องการรหัสสินค้า ชื่อสินค้า และจำนวนทั้งหมดที่ขาย
+SELECT 
+    p.ProductID AS รหัสสินค้า,
+    p.ProductName AS ชื่อสินค้า,
+    SUM(od.Quantity) AS จำนวนทั้งหมดที่ขาย
+FROM Products p
+JOIN [Order Details] od ON p.ProductID = od.ProductID
+GROUP BY p.ProductID, p.ProductName;
