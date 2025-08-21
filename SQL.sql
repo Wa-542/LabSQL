@@ -19,3 +19,15 @@ WHERE Shippers.ShipperID = Orders.Shipvia
 SELECT CompanyName, OrderID
 FROM Orders JOIN Shippers
 ON Shippers.ShipperID = Orders.Shipvia
+
+--จงแสดงข้อมูลหมายเลขใบสั่งซื้อและชื่อบริษัทขนส่งสินค้าของใบสั่งซื้อหมายเลข 10275
+--• Cartesian Product
+SELECT CompanyName, OrderID
+FROM Orders, Shippers
+WHERE Shippers.ShipperID = Orders.Shipvia
+AND OrderID = 10275
+--• Join Operator
+SELECT CompanyName, OrderID
+FROM Orders JOIN Shippers
+ON Shippers.ShipperID=Orders.Shipvia
+WHERE OrderID=10275
