@@ -32,7 +32,7 @@ FROM Orders JOIN Shippers
 ON Shippers.ShipperID=Orders.Shipvia
 WHERE OrderID=10275
 
---ต้องการรหัสสินค้า ชื่อสินค้า บริษัทผู้จำหน่าย ประเทศ
+--ต้องการรหัสสินค้า ชื่อสินค้า บริษัทผู้จำหน่าย ประเทศ เอาสินค้าที่มาจาประเทศ USA,UK
 SELECT 
     p.ProductID AS รหัสสินค้า,
     p.ProductName AS ชื่อสินค้า,
@@ -40,7 +40,7 @@ SELECT
     s.Country AS ประเทศ
 FROM Products p
 JOIN Suppliers s ON p.SupplierID = s.SupplierID;
-
+WHERE Country in ('usa','uk')
 --ต้องการรหัสพนังงาน ชื่อพนักงาน รหัสใบสั่งซื้อืี่เกี่ยวข้อง เรียงตามลำดับรหัสพนักงาน
 SELECT 
     e.EmployeeID AS รหัสพนักงาน,
@@ -59,3 +59,17 @@ SELECT
 FROM Products p
 JOIN Suppliers s ON p.SupplierID = s.SupplierID;
 
+--จงแสดงหมายเลขใบสั่งซื้อ, ชื่อบริษัทลูกค้า,สถานที่ส่งของ, และพนักงานผู้ดูแล
+--•Cartesian Product
+SELECT O.OrderID เลขใบสั่งซื้อ, C.CompanyName ลูกค้า,
+       E.FirstName พนักงาน, O.ShipAddress ส่งไปที่
+FROM Orders O, Customers C, Employees E
+WHERE O.CustomerID=C.CustomerID
+    AND O.EmployeeID=E.EmployeeID
+--•JOIN Operator
+SELECT O.OrderID เลขใบสั่งซื้อ, C.CompanyName ลูกค้า,
+       E.FirstName พนักงาน, O.ShipAddress ส่งไปที่
+FROM Orders O
+join Customers C on O.CustomerID=C.CustomerID
+
+join Employees E on O.EmployeeID=E.EmployeeID
