@@ -81,5 +81,3 @@ CREATE TABLE FeedingSchedule (
     FOREIGN KEY (keeper_id) REFERENCES Keeper(keeper_id)
 );
 
-
-Select * from FeedingSchedule
